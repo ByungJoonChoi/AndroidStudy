@@ -21,60 +21,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int width_img;
     private int height_img;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         hideActionBar();
+        getImageWidthAndHeight();
+
         imageViewUp = (ImageView) findViewById(R.id.imageViewUp);
         imageViewDown = (ImageView) findViewById(R.id.imageViewDown);
+
         button_up = (ImageView) findViewById(R.id.button_up);
         button_down = (ImageView) findViewById(R.id.button_down);
-
         button_up.setOnClickListener(this);
         button_down.setOnClickListener(this);
 
-        BitmapFactory.Options dimensions = new BitmapFactory.Options();
-        dimensions.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(getResources(), R.drawable.sample1, dimensions);
-        width_img =  dimensions.outWidth;
-        height_img = dimensions.outHeight;
-
-        Log.d("test", "width : " + width_img + ", height : " + height_img);
-
-
-
         drawImage(imageViewUp);
-
     }
 
     @Override
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.button_up:
-
-                if(isImageUp)
-                    return;
-                drawImage(imageViewUp);
-                cancelImage(imageViewDown);
-                isImageUp = !isImageUp;
+                moveUp();
                 break;
 
             case R.id.button_down:
-
-                if(!isImageUp)
-                    return;
-                drawImage(imageViewDown);
-                cancelImage(imageViewUp);
-                isImageUp = !isImageUp;
+                moveDown();
                 break;
 
             default:
                 break;
         }
 
+    }
+
+    public void moveUp(){
+        if(isImageUp)
+            return;
+        drawImage(imageViewUp);
+        deleteImage(imageViewDown);
+        isImageUp = !isImageUp;
+    }
+
+    public void moveDown(){
+        if(!isImageUp)
+            return;
+        drawImage(imageViewDown);
+        deleteImage(imageViewUp);
+        isImageUp = !isImageUp;
     }
 
     public void drawImage(ImageView imageView){
@@ -86,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .into(imageView);
     }
 
-    public void cancelImage(ImageView imageView){
+    public void deleteImage(ImageView imageView){
         Glide
                 .with(this)
                 .load("")
@@ -99,5 +95,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(bar != null){
             bar.hide();
         }
+    }
+
+    public void getImageWidthAndHeight(){
+        BitmapFactory.Options dimensions = new BitmapFactory.Options();
+        dimensions.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(getResources(), R.drawable.sample1, dimensions);
+        width_img =  dimensions.outWidth;
+        height_img = dimensions.outHeight;
+        Log.d("test", "width : " + width_img + ", height : " + height_img);
     }
 }
