@@ -8,10 +8,64 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="io.demianlab.exercise02.MainActivity">
 
-    <TextView
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="96dp"
+        android:inputType="text|textMultiLine"
+        android:layout_above="@+id/container_count"
+        android:background="@drawable/border_edittext"
+        android:maxLength="80"
+        android:gravity="top|left"
+        android:padding="10dp"
+        android:layout_marginBottom="5dp" />
+
+    <RelativeLayout
+        android:id="@+id/container_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/container_buttons"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:id="@+id/count_text"
+            android:text="0 / 80 바이트"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/container_buttons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp">
+
+        <Button
+            android:id="@+id/send"
+            android:text="전송"
+            android:textSize="20sp"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/close"
+            android:text="닫기"
+            android:textSize="20sp"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/send"
+            android:layout_marginStart="10dp" />
+
+    </RelativeLayout>
+
 </RelativeLayout>
