@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -13,7 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private EditText editText;
     private TextView count_text;
@@ -26,52 +27,102 @@ public class MainActivity extends AppCompatActivity {
         hideActionBar();
 
         Button send = (Button) findViewById(R.id.send);
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String text = editText.getText().toString();
-                if(text.length() == 0){
-                    Toast.makeText(getApplicationContext(), "글자를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                editText.clearFocus();
-            }
-        });
+        Button close = (Button) findViewById(R.id.close);
+        send.setOnClickListener(this);
+        close.setOnClickListener(this);
 
         count_text = (TextView) findViewById(R.id.count_text);
 
         editText = (EditText) findViewById(R.id.editText);
         editText.addTextChangedListener(new TextWatcher() {
 
-            String before;
+            private String before;
 
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                before = charSequence.toString();
+                Log.d("test", "beforeTextChanged() is called");
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Log.d("test", "onTextChanged() is called");
                 String txt = editText.getText().toString();
                 int count = txt.getBytes().length;
-                count_text.setText(count + " / 80 바이트");
+                String str = count + " / 80  바이트";
+                Log.d("test", "charSeq : "+ charSequence.toString());
+                count_text.setText(str);
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String txt = editText.getText().toString();
+                Log.d("test", "afterTextChanged() is called");
+                String txt = editText.getText().toString(); // 자동으로 콜백이 두 번 호출될 때 이 부분이 이상하게 작동함
+                Log.d("test", "txt : " + txt);
                 int count = txt.getBytes().length;
+
                 if(count > 80) {
+
+                    Log.d("test", "count > 80 before : " + before);
                     editText.setText(before);
-                    editText.setSelection(before.length()-1);
+                    editText.setSelection(before.length());
+
+                    Toast.makeText(getApplicationContext(), "최대 입력글자 수를 초과하였습니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    if(before != null && before.length() > 0){
+                        if(before.length() > txt.length()){
+                            return;
+                            // <안드로이드 버그로 보이는 현상>
+                            // 텍스트 입력도중 clearfocus 했다가 다시 EditText 가장 마지막 부분에 커서를 놓고 입력하면 TextWatcher 콜백이 두번 호출됨.
+                            // 그리고 EditText 에 입력되어 있는 문자열보다 더 적은 수의 문자열이 log 에 찍힘
+                        }
+                    }
+                    before = txt;
+                    Log.d("test", "count <= 80 before : " + before);
+
                 }
-
-
             }
         });
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.send :
+                sendMsg();
+                break;
+
+            case R.id.close :
+                hideKeyboardOrFinish();
+                break;
+
+            default :
+                break;
+        }
+    }
+
+    public void sendMsg(){
+        String text = editText.getText().toString();
+        if(text.length() == 0){
+            Toast.makeText(getApplicationContext(), "글자를 입력해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        editText.clearFocus();
+    }
+
+    public void hideKeyboardOrFinish(){
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm.isAcceptingText()) {
+            Log.d("test", "soft keyboard was shown");
+            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+            editText.clearFocus();
+
+        } else {
+            Log.d("test", "soft keyboard is not shown");
+            finish();
+        }
     }
 
     public void hideActionBar(){

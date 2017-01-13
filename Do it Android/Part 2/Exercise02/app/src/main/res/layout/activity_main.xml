@@ -16,11 +16,10 @@
         android:id="@+id/editText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textSize="96dp"
-        android:inputType="text|textMultiLine"
+        android:textSize="96sp"
+        android:inputType="textMultiLine|textNoSuggestions"
         android:layout_above="@+id/container_count"
         android:background="@drawable/border_edittext"
-        android:maxLength="80"
         android:gravity="top|left"
         android:padding="10dp"
         android:layout_marginBottom="5dp" />
