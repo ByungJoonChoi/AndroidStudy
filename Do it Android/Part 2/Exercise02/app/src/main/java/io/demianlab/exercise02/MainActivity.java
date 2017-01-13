@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
+    private final String TAG = "MainActivity";
+
     private EditText editText;
     private TextView count_text;
 
@@ -40,46 +42,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Log.d("test", "beforeTextChanged() is called");
+
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Log.d("test", "onTextChanged() is called");
+                Log.d(TAG, "onTextChanged() is called");
                 String txt = editText.getText().toString();
                 int count = txt.getBytes().length;
                 String str = count + " / 80  바이트";
-                Log.d("test", "charSeq : "+ charSequence.toString());
                 count_text.setText(str);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                Log.d("test", "afterTextChanged() is called");
-                String txt = editText.getText().toString(); // 자동으로 콜백이 두 번 호출될 때 이 부분이 이상하게 작동함
-                Log.d("test", "txt : " + txt);
-                int count = txt.getBytes().length;
 
                 if(count > 80) {
-
-                    Log.d("test", "count > 80 before : " + before);
+                    Log.d(TAG, "count > 80 before : " + before);
                     editText.setText(before);
                     editText.setSelection(before.length());
 
                     Toast.makeText(getApplicationContext(), "최대 입력글자 수를 초과하였습니다.", Toast.LENGTH_SHORT).show();
                 } else {
                     if(before != null && before.length() > 0){
-                        if(before.length() > txt.length()){
+                        if(before.length() - 1 > txt.length()){
                             return;
                             // <안드로이드 버그로 보이는 현상>
-                            // 텍스트 입력도중 clearfocus 했다가 다시 EditText 가장 마지막 부분에 커서를 놓고 입력하면 TextWatcher 콜백이 두번 호출됨.
-                            // 그리고 EditText 에 입력되어 있는 문자열보다 더 적은 수의 문자열이 log 에 찍힘
+                            // 텍스트 입력도중 clear focus 했다가 다시 EditText 가장 마지막 부분에 커서를 놓고 입력하면 TextWatcher 콜백이 두번 호출됨.
+                            // 그리고 EditText 에 입력되어 있는 문자열보다 훨씬 더 적은 수의 문자열이 log 에 찍힘
                         }
                     }
                     before = txt;
                     Log.d("test", "count <= 80 before : " + before);
-
                 }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
     }
@@ -115,12 +111,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void hideKeyboardOrFinish(){
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm.isAcceptingText()) {
-            Log.d("test", "soft keyboard was shown");
+            Log.d(TAG, "soft keyboard was shown");
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
             editText.clearFocus();
 
         } else {
-            Log.d("test", "soft keyboard is not shown");
+            Log.d(TAG, "soft keyboard is not shown");
             finish();
         }
     }
