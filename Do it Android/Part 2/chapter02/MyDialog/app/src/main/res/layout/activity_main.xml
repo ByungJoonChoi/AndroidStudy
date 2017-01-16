@@ -10,8 +10,13 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="io.demianlab.mydialog.MainActivity">
 
-    <TextView
+    <Button
+        android:text="대화상자 띄우기"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="33dp"
+        android:id="@+id/button"
+        android:onClick="onButton1Clicked" />
 </RelativeLayout>
